@@ -1,0 +1,40 @@
+// Importacion, creacion del esquema y lectura del archivo
+import org.apache.spark.sql.types._
+
+val myDataSchema = StructType(Array(StructField("id_persona", DecimalType(26, 0), true), StructField("anio", IntegerType, true), StructField("mes", IntegerType, true), StructField("provincia", IntegerType, true),  StructField("canton", IntegerType, true), StructField("area", StringType, true), StructField("genero", StringType, true), StructField("edad", IntegerType, true), StructField("estado_civil", StringType, true), StructField("nivel_de_instruccion", StringType, true), StructField("etnia", StringType, true), StructField("ingreso_laboral", IntegerType, true), StructField("condicion_actividad", StringType, true), StructField("sectorizacion", StringType, true), StructField("grupo_ocupacion", StringType, true), StructField("rama_actividad", StringType, true), StructField("factor_expansion", DoubleType, true)));
+
+val data = spark.read.schema(myDataSchema).option("header","true").option("delimiter","\t").csv("/home/franjo18/Documentos/datos_proyecto/Datos_ENEMDU_PEA_v2.csv");
+// Presentacion de la columna a usar
+data.groupBy("rama_actividad").count.distinct.show(data.select("rama_actividad").distinct.count.toInt,false);
+//Tomando de referencia la columna rama de actividad: 
+
+//1. ¿Cuantas personas de etnia "indigena" podemos encontrar en la rama: P enseñanza?
+data.where($"rama_actividad" === "16 - P. Enseñanza" && $"etnia" === "1 - Indígena").groupBy("etnia").count.show
++------------+-----+
+|       etnia|count|
++------------+-----+
+|1 - Indígena| 1684|
++------------+-----+
+
+//2. ¿Cuantas mujeres pertenecen a la rama: F. construccion?
+data.select("rama_actividad","genero").where($"genero" === "2 - Mujer" && $"rama_actividad" === "06 - F. Construcción").count
+Long = 1218 
+data.where($"rama_actividad".isNull).count
+//3. ¿Cual es la media de edad de trabajadores que estan en el area: No especificado?
+val edadNoespecificado = data.select("edad").where($"rama_actividad" === "22 - No especificado")
+edadNoespecificado.select(mean("edad")).show;
++------------------+
+|         avg(edad)|
++------------------+
+|30.666666666666668|
++------------------+
+//4. ¿Cual es el sueldo maximo que se gana en la rama: A. Agricultura, ganadería caza y silvicultura y pesca?
+val dataAgri = data.select("ingreso_laboral").where($"rama_actividad" === "01 - A. Agricultura, ganadería caza y silvicultura y pesca")
+dataAgri.select(min("ingreso_laboral") as("Sueldo Minimo"), max("ingreso_laboral") as("Sueldo Maximo")).show
++-------------+-------------+                       
+|Sueldo Minimo|Sueldo Maximo|
++-------------+-------------+
+|            0|        30015|
++-------------+-------------+
+
+
