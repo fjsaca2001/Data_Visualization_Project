@@ -19,7 +19,6 @@ data.where($"rama_actividad" === "16 - P. Enseñanza" && $"etnia" === "1 - Indí
 //2. ¿Cuantas mujeres pertenecen a la rama: F. construccion?
 data.select("rama_actividad","genero").where($"genero" === "2 - Mujer" && $"rama_actividad" === "06 - F. Construcción").count
 Long = 1218 
-data.where($"rama_actividad".isNull).count
 //3. ¿Cual es la media de edad de trabajadores que estan en el area: No especificado?
 val edadNoespecificado = data.select("edad").where($"rama_actividad" === "22 - No especificado")
 edadNoespecificado.select(mean("edad")).show;
