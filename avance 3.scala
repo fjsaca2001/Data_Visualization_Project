@@ -53,8 +53,7 @@ display(genero)
 data.select($"etnia", $"ingreso").groupBy("etnia").avg("ingreso").sort(desc("avg(ingreso)")).show
 
 // COMMAND ----------
-
-val etnias = data.groupBy("anio").pivot("genero").max("ingreso").orderBy("anio")
+val etnias = data.select($"etnia", $"ingreso").groupBy("etnia").avg("ingreso").sort(desc("avg(ingreso)"))
 
 // COMMAND ----------
 
