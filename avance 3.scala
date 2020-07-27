@@ -17,12 +17,12 @@ val data = spark
 
 // COMMAND ----------
 
-// La variable a trabajar es la de Ingreso Laboral
+// La Columna a trabajar es la de Ingreso Laboral
 data.select("ingreso").summary()
 
 // COMMAND ----------
 
-// Ingreso máximo por estado civil
+// Cual es el ingreso máximo por estado civil 
 data.groupBy("anio").pivot("estado").max("ingreso").orderBy($"anio"desc).show(5)
 
 // COMMAND ----------
@@ -36,7 +36,7 @@ display(estado)
 
 // COMMAND ----------
 
-// Ingresos máximos según género
+// Comparación de ingresos máximos entre hombres y mujeres
 data.groupBy("anio").pivot("genero").max("ingreso").orderBy("anio").show
 
 // COMMAND ----------
@@ -49,7 +49,7 @@ display(genero)
 
 // COMMAND ----------
 
-// Etnias con mayor ingreso laboral
+// Etnias con mayor ingreso laboral en orden ascendente
 data.select($"etnia", $"ingreso").groupBy("etnia").avg("ingreso").sort(desc("avg(ingreso)")).show
 
 // COMMAND ----------
@@ -61,7 +61,7 @@ display(etnias)
 
 // COMMAND ----------
 
-// Ingresos por género segun la rama
+// Ingresos máximos para hombres y mujeres en todas las ramas
 data.groupBy("rama").pivot("genero").max("ingreso").orderBy("rama").show
 
 // COMMAND ----------
